@@ -21,7 +21,7 @@ export default class TransactionConfirmationOverlay extends PureComponent {
         this._cancel = this.props.cancel;
     };
 
-    _verifyPassword = () => {
+    _verifyPassword() {
         if (this.props.passwordOnly) return true;
 
         if (!this.mnemonic) {
@@ -37,7 +37,7 @@ export default class TransactionConfirmationOverlay extends PureComponent {
         return correctPassword;
     };
 
-    _handleChange = (value, event) => {
+    _handleChange(value, event) {
         let change = {};
         change[event["target"].id] = value;
         this.setState(change);

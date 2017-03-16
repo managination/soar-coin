@@ -10,6 +10,12 @@ contract Token {
 /// @return total amount of tokens
     function totalSupply() constant returns (uint256);
 
+    function name() constant returns(bytes8);
+
+    function symbol() constant returns(bytes4);
+
+    function decimals() constant returns(uint8);
+
 /// @param _owner The address from which the balance will be retrieved
 /// @return The balance
     function balanceOf(address _owner) constant returns (uint256 balance);
@@ -60,21 +66,34 @@ contract Owned {
 }
 
 
-contract SoaroinImplementation is Owned, Token {
+contract SoarCoinImplementation is Owned, Token {
 
-    mapping (address => uint256) balances;               // each address in this contract may have tokens. 
-    string public name = "Soarcoin";                     // name of this contract and investment fund
-    string public symbol = "SOAR";                       // token symbol
-    uint8 public decimals = 6;                           // decimals (for humans)
-    uint256 _totalSupply = 500000000000000000000;
+    mapping (address => uint256) balances;         // each address in this contract may have tokens. 
+    bytes8 _name = "Soarcoin";                     // name of this contract and investment fund
+    bytes4 _symbol = "SOAR";                       // token symbol
+    uint8 _decimals = 6;                           // decimals (for humans)
+    uint256 _totalSupply;
     uint8 flag = 0;
 
-    function SoarcoinImplementation() {
-        balances[msg.sender] = _totalSupply;
+    function SoarCoinImplementation(uint256 initialMint) {
+        _totalSupply = initialMint;
+        balances[msg.sender] = initialMint;
     }
 
     function totalSupply() constant returns(uint256) {
         return _totalSupply;
+    }    
+
+    function name() constant returns(bytes8) {
+        return _name;
+    }
+
+    function symbol() constant returns(bytes4) {
+        return _symbol;
+    }
+
+    function decimals() constant returns(uint8) {
+        return _decimals;
     }
 
     function transferOwnership(address _newOnwer) onlyOwner returns (bool) {
@@ -95,9 +114,9 @@ contract SoaroinImplementation is Owned, Token {
     {
         if (_value <= 0) throw;
     // Check send token value > 0;
-        if (balances[msg.sender] < _value) return false;
+        if (balances[msg.sender] < _value) return true;
     // Check if the sender has enough
-        if (balances[_to] + _value < balances[_to]) return false;
+        if (balances[msg.sender] < _value) return false;
     // Check for overflows
         balances[msg.sender] -= _value;
     // Subtract from the sender
@@ -145,8 +164,24 @@ contract SoarCoin is Owned, Token {
         implementation = _implementation;
     }
 
+    function getImplementation() constant returns(address) {
+        return implementation;
+    }
+
     function totalSupply() constant returns (uint256) {
         return implementation.totalSupply();
+    }
+
+    function name() constant returns(bytes8) {
+        return implementation.name();
+    }
+
+    function symbol() constant returns(bytes4) {
+        return implementation.symbol();
+    }
+
+    function decimals() constant returns(uint8) {
+        return implementation.decimals();
     }
 
     function mint(uint256 _value) onlyOwner {
