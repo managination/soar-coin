@@ -2,7 +2,7 @@ var fs = require('fs');
 var solc = require('solc');
 var Web3 = require('web3');
 
-var owner = "0xdd9df207ce1d2df832d9f6882c8521c6b4df4cd3";
+var owner = "0xc5ca41af6dda284367cc903a34565438a01480fb";
 
 let provider = new Web3.providers.HttpProvider('http://localhost:8548');
 var web3 = new Web3(provider);
@@ -58,10 +58,11 @@ var soarImplInstance = soarImpl.new(500000000000000000000, {
                             }
                             json.owner = owner;
                             json.addresses = [
-                                "0xdd9df207ce1d2df832d9f6882c8521c6b4df4cd3",
-                                "0x6d8B18F9b737160A73F536393C908FE89961E570",
-                                "0xC62e02ddc6C1A78ca63F144253E74c85ecB76B74",
-                            ]
+                                "0xc5ca41af6dda284367cc903a34565438a01480fb",
+                                "0x175a6bebad8458a30c7a228892df4a9cf6d765ee",
+                                "0x18b3a6110029ef8dc2d0d458b7eaddf26ca1b871",
+                            ];
+                            json.password = "ppp";
                             fs.writeFileSync("../../imports/contracts/soar-coin-ropsten.json", JSON.stringify(json));
                         }
                     });

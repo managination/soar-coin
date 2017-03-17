@@ -35,11 +35,15 @@ describe("test on testrpc", function () {
     });
 
     it("does not change the balance when a transfer is made on the tokenImplementation", function (done) {
+        let sender = contractDefs.addresses[0];
+        if(contractDefs.password)
+            web3.personal.unlockAccount(sender, contractDefs.password);
+
         tokenImpl.transfer(contractDefs.addresses[0], contractDefs.addresses[1], 500000000, {
-            from: contractDefs.addresses[0],
+            from: sender,
             data: undefined,
             value: web3.toHex(0),
-            nonce: web3.eth.getTransactionCount(contractDefs.addresses[0], "pending"),
+            nonce: web3.eth.getTransactionCount(sender, "pending"),
             gas: 100000
         }, function (err, res) {
             if (!err) {
@@ -57,11 +61,15 @@ describe("test on testrpc", function () {
 
     it("changes the balance when a transfer is made on the token", function (done) {
         transfered += 500000000;
+        let sender = contractDefs.addresses[0];
+        if(contractDefs.password)
+            web3.personal.unlockAccount(sender, contractDefs.password);
+
         token.transfer(contractDefs.addresses[2], 500000000, {
-            from: contractDefs.addresses[0],
+            from: sender,
             data: undefined,
             value: web3.toHex(0),
-            nonce: web3.eth.getTransactionCount(contractDefs.addresses[0], "pending"),
+            nonce: web3.eth.getTransactionCount(sender, "pending"),
             gas: 100000
         }, function (err, res) {
             if (!err) {
@@ -78,11 +86,15 @@ describe("test on testrpc", function () {
     });
 
     it("does not change the owner when called from an incorrect address", function (done) {
+        let sender = contractDefs.addresses[1];
+        if(contractDefs.password)
+            web3.personal.unlockAccount(sender, contractDefs.password);
+
         token.transferOwnership(contractDefs.addresses[2], {
-            from: contractDefs.addresses[1],
+            from: sender,
             data: undefined,
             value: web3.toHex(0),
-            nonce: web3.eth.getTransactionCount(contractDefs.addresses[1], "pending"),
+            nonce: web3.eth.getTransactionCount(sender, "pending"),
             gas: 100000
         }, function (err, res) {
             if (!err) {
@@ -101,11 +113,15 @@ describe("test on testrpc", function () {
 
     it("does  change the owner when called from the correct address", function (done) {
         let ownerBalance = token.balanceOf(contractDefs.addresses[0]).toNumber();
+        let sender = contractDefs.addresses[0];
+        if(contractDefs.password)
+            web3.personal.unlockAccount(sender, contractDefs.password);
+
         token.transferOwnership(contractDefs.addresses[2], {
-            from: contractDefs.addresses[0],
+            from: sender,
             data: undefined,
             value: web3.toHex(0),
-            nonce: web3.eth.getTransactionCount(contractDefs.addresses[0], "pending"),
+            nonce: web3.eth.getTransactionCount(sender, "pending"),
             gas: 100000
         }, function (err, res) {
             if (!err) {
@@ -114,6 +130,90 @@ describe("test on testrpc", function () {
                 chai.assert.equal(token.owner().toString(), contractDefs.addresses[2]);
                 chai.assert.equal(token.balanceOf(contractDefs.addresses[0]).toNumber(), 0);
                 chai.assert.equal(token.balanceOf(contractDefs.addresses[2]).toNumber(), ownerBalance + 500000000);
+                done();
+            } else if (err) {
+                console.log(err);
+                chai.assert.fail("error in transferOwnership " + err.message);
+                done();
+            }
+        });
+    });
+
+    it("does mint new tokens when called from the correct address", function (done) {
+        let ownerBalance = token.balanceOf(contractDefs.addresses[2]).toNumber();
+        let totalSupply = token.totalSupply().toNumber();
+        let sender = contractDefs.addresses[2];
+        if(contractDefs.password)
+            web3.personal.unlockAccount(sender, contractDefs.password);
+
+        token.mint(500000000000000000000, {
+            from: sender,
+            data: undefined,
+            value: web3.toHex(0),
+            nonce: web3.eth.getTransactionCount(sender, "pending"),
+            gas: 100000
+        }, function (err, res) {
+            if (!err) {
+                console.log("mint", err, res);
+                // chai.assert.equal(res, true, "the return value from transfer must be true");
+                chai.assert.equal(token.totalSupply().toNumber(), totalSupply + 500000000000000000000);
+                chai.assert.equal(token.balanceOf(contractDefs.addresses[2]).toNumber(), ownerBalance + 500000000000000000000);
+                done();
+            } else if (err) {
+                console.log(err);
+                chai.assert.fail("error in transferOwnership " + err.message);
+                done();
+            }
+        });
+    });
+
+    it("does not mint new tokens when called from the wrong address", function (done) {
+        let ownerBalance = token.balanceOf(contractDefs.addresses[2]).toNumber();
+        let totalSupply = token.totalSupply().toNumber();
+        let sender = contractDefs.addresses[1];
+        if(contractDefs.password)
+            web3.personal.unlockAccount(sender, contractDefs.password);
+
+        token.mint(500000000000000000000, {
+            from: sender,
+            data: undefined,
+            value: web3.toHex(0),
+            nonce: web3.eth.getTransactionCount(sender, "pending"),
+            gas: 100000
+        }, function (err, res) {
+            if (!err) {
+                console.log("mint", err, res);
+                // chai.assert.equal(res, true, "the return value from transfer must be true");
+                chai.assert.equal(token.totalSupply().toNumber(), totalSupply);
+                chai.assert.equal(token.balanceOf(contractDefs.addresses[2]).toNumber(), ownerBalance);
+                done();
+            } else if (err) {
+                console.log(err);
+                chai.assert.fail("error in transferOwnership " + err.message);
+                done();
+            }
+        });
+    });
+
+    it("does not mint new tokens when called from the correct address on the implementation directly", function (done) {
+        let ownerBalance = token.balanceOf(contractDefs.addresses[2]).toNumber();
+        let totalSupply = token.totalSupply().toNumber();
+        let sender = contractDefs.addresses[2];
+        if(contractDefs.password)
+            web3.personal.unlockAccount(sender, contractDefs.password);
+
+        tokenImpl.mint(sender, 500000000000000000000, {
+            from: sender,
+            data: undefined,
+            value: web3.toHex(0),
+            nonce: web3.eth.getTransactionCount(sender, "pending"),
+            gas: 100000
+        }, function (err, res) {
+            if (!err) {
+                console.log("mint", err, res);
+                // chai.assert.equal(res, true, "the return value from transfer must be true");
+                chai.assert.equal(token.totalSupply().toNumber(), totalSupply);
+                chai.assert.equal(token.balanceOf(contractDefs.addresses[2]).toNumber(), ownerBalance);
                 done();
             } else if (err) {
                 console.log(err);

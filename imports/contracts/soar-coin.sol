@@ -89,7 +89,7 @@ contract SoarCoinImplementation is Owned {
     }
 
     function suicide() onlyOwner {
-        if (msg.sender == _owner) selfdestruct(owner);
+        if (msg.sender == _owner) selfdestruct(_owner);
     }
 
     function SoarCoinImplementation(uint256 initialMint) {
@@ -160,10 +160,10 @@ contract SoarCoinImplementation is Owned {
         flag = 1;
     }
 
-    function mint(uint256 _value) onlyOwner
+    function mint(address recipient, uint256 _value) contractOnly(msg.sender)
     {
         if (_value <= 0 && flag == 0) throw;
-        balances[msg.sender] += _value;
+        balances[recipient] += _value;
         _totalSupply += _value;
     }
 }
@@ -207,7 +207,7 @@ contract SoarCoin is Owned, Token {
     }
 
     function mint(uint256 _value) onlyOwner {
-        implementation.mint(_value);
+        implementation.mint(_owner, _value);
     }
 
 /// @param _owner The address from which the balance will be retrieved
