@@ -65,7 +65,6 @@ contract Owned {
 
 }
 
-
 contract SoarCoinImplementation is Owned, Token {
 
     mapping (address => uint256) balances;         // each address in this contract may have tokens. 
@@ -110,21 +109,19 @@ contract SoarCoinImplementation is Owned, Token {
     }
 
 // transfer tokens from one address to another
-    function transfer(address _to, uint256 _value) returns (bool success)
+    function transfer(address _to, uint256 _value) 
     {
         if (_value <= 0) throw;
     // Check send token value > 0;
-        if (balances[msg.sender] < _value) return true;
-    // Check if the sender has enough
         if (balances[msg.sender] < _value) return false;
+    // Check if the sender has enough
+        if (balances[_to] + _value < balances[_to]) return false;
     // Check for overflows
         balances[msg.sender] -= _value;
     // Subtract from the sender
         balances[_to] += _value;
     // Add the same to the recipient, if it's the contact itself then it signals a sell order of those tokens
         Transfer(msg.sender, _to, _value);
-    // Notify anyone listening that this transfer took place
-        return true;
     }
 
     function transferFrom(address _from, address _to, uint256 _value) returns (bool success) {
