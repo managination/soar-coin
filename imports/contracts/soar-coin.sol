@@ -51,7 +51,6 @@ contract Token {
 
 }
 
-
 contract Owned {
     address _owner;
 
@@ -68,7 +67,6 @@ contract Owned {
     }
 
 }
-
 
 contract SoarCoinImplementation is Owned {
     address public trustedContract;
@@ -88,6 +86,10 @@ contract SoarCoinImplementation is Owned {
         } else {
             UnauthorizedCall(caller);
         }
+    }
+
+    function suicide() onlyOwner {
+        if (msg.sender == _owner) selfdestruct(owner);
     }
 
     function SoarCoinImplementation(uint256 initialMint) {
