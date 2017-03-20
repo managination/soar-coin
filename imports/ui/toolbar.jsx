@@ -8,7 +8,7 @@ import DropDownMenu from 'material-ui/DropDownMenu';
 import RaisedButton from 'material-ui/RaisedButton';
 import {Toolbar, ToolbarGroup, ToolbarSeparator, ToolbarTitle} from 'material-ui/Toolbar';
 
-export default class maintoolbar extends React.Component {
+export default class MainToolbar extends React.PureComponent {
 
     constructor(props) {
         super(props);

@@ -1,24 +1,26 @@
 import {Meteor} from "meteor/meteor";
 import {render} from "react-dom";
 import React from "react";
+import AppBar from 'material-ui/AppBar';
+import ReactDOM from 'react-dom';
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import injectTapEventPlugin from 'react-tap-event-plugin';
+import MainToolbar from "../imports/ui/toolbar";
 
-import maintoolbar from "../App/ui/toolbar";
-import BottomNavigation from '../App/ui/bottombar'
+const App = () => (
+    <MuiThemeProvider>
+        <MainToolbar/>
+    </MuiThemeProvider>
+);
 
 
 Meteor.startup(() => {
-    const maintoolbar = function () {
+    const renderMe = function () {
+        injectTapEventPlugin();
         render(
-            <maintoolbar />, document.getElementById('render-target')
+            <App/>, document.getElementById('render-target')
         );
     };
 
-    const BottomNavigation = function () {
-        render(
-            <BottomNavigation/>, document.getElementById('render-bottom')
-        );
-
-    };
-    maintoolbar();
-    BottomNavigation();
+    renderMe();
 });
