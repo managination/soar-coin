@@ -13,12 +13,11 @@ export default class maintoolbar extends React.Component {
     constructor(props) {
         super(props);
         this.state = {value: 3, };
+        this.handleChange = this.handleChange.bind(this)
     };
 
- // handleChange = (event, index, value) => this.setState({value});
-    handleChange(event, index, value) {
-        this.setState({value});
-    };
+    handleChange (event, index, value) { this.setState({value});};
+
 
     render() {
 
