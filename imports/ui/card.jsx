@@ -6,8 +6,6 @@ import FlatButton from 'material-ui/FlatButton';
 export default class card extends React.PureComponent {
     constructor(props) {
         super(props);
-        //this.state = {value: 3, };
-        this.handleChange = this.handleChange.bind(this)
     };
 
     render(){
