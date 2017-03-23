@@ -19,6 +19,11 @@ import {Toolbar, ToolbarGroup, ToolbarTitle} from 'material-ui/Toolbar';
 //import historic
 import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn} from 'material-ui/Table';
 
+//QR code
+var ReactDOM = require('react-dom');
+var QRCode = require('qrcode-react');
+
+
 
 //styles
 const styles = {
@@ -31,14 +36,19 @@ const styles = {
         height: 96,
         padding: 24,
     },
-    infoColumn: {
+    right: {
         float: 'right',
         textAlign: 'right',
     },
 
-    amountAddressColumn: {
+    center: {
         float: 'center',
         textAlign: 'center',
+    },
+
+    left: {
+        float: 'left',
+        textAlign: 'left',
     },
 };
 
@@ -102,8 +112,6 @@ export default class MainToolbar extends React.PureComponent {
                         <MenuItem primaryText="Copy Mnemonic"/>
                     </IconMenu>
                 </ToolbarGroup>
-
-
             </Toolbar>
 
         );
@@ -120,8 +128,8 @@ export default class MainToolbar extends React.PureComponent {
                     {tableData.map( (row, index) => (
                         <TableRow key={index}>
                             <TableRowColumn>{row.inOut}</TableRowColumn>
-                            <TableRowColumn style={styles.amountAddressColumn}>{row.amountAddress}</TableRowColumn>
-                            <TableRowColumn style={styles.infoColumn}>
+                            <TableRowColumn style={styles.center}>{row.amountAddress}</TableRowColumn>
+                            <TableRowColumn style={styles.right}>
                                 <iconButton>
                                     <InfoOutLine/>
                                 </iconButton>
@@ -137,24 +145,23 @@ export default class MainToolbar extends React.PureComponent {
     renderCard(){
         return(
             <Card>
-                <CardHeader
-                    title="Without Avatar"
-                    subtitle="Subtitle"
-                    actAsExpander={true}
-                    showExpandableButton={true}
-                />
-                <CardActions>
-                    <FlatButton label="Action1" />
-                    <FlatButton label="Action2" />
-                </CardActions>
-                <CardText expandable={true}>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                    Donec mattis pretium massa. Aliquam erat volutpat. Nulla facilisi.
-                    Donec vulputate interdum sollicitudin. Nunc lacinia auctor quam sed pellentesque.
-                    Aliquam dui mauris, mattis quis lacus id, pellentesque lobortis odio.
-                </CardText>
-            </Card>
+                <Table  selectable={false}>
+                    <TableBody displayRowCheckbox={false}>
+                        <TableRow>
+                            <TableRowColumn style={styles.center}>
+                                <QRCode value="http://facebook.github.io/react/"/>
+                            </TableRowColumn>
+                            <TableRowColumn>
+                                 <CardText style={styles.left}>
+                                        Name surname
+                                    1000 SOAR = 100 CHF
 
+                                </CardText>
+                            </TableRowColumn>
+                        </TableRow>
+                </TableBody>
+                </Table>
+            </Card>
         );
 
     };
