@@ -4,6 +4,8 @@ import React from 'react';
 //import card
 import {Card, CardActions, CardHeader, CardText} from 'material-ui/Card';
 import FlatButton from 'material-ui/FlatButton';
+import Camera from 'material-ui/svg-icons/image/camera-alt';
+import TextField from 'material-ui/TextField';
 
 //import toolbar
 import IconMenu from 'material-ui/IconMenu';
@@ -15,15 +17,19 @@ import VerticAlalignBottom from 'material-ui/svg-icons/editor/vertical-align-bot
 import InfoOutLine from 'material-ui/svg-icons/action/info-outline';
 import MenuItem from 'material-ui/MenuItem';
 import {Toolbar, ToolbarGroup, ToolbarTitle} from 'material-ui/Toolbar';
-
+import Home from 'material-ui/svg-icons/action/home';
 //import historic
 import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn} from 'material-ui/Table';
 
+//import Snackbar
+import Snackbar from 'material-ui/Snackbar';
+import RaisedButton from 'material-ui/RaisedButton';
+
+
 //QR code
-var ReactDOM = require('react-dom');
-var QRCode = require('qrcode-react');
-
-
+//var ReactDOM = require('react-dom');
+//let QRCode = require('qrcode-react');
+let QRCode = require('qrcode.react');
 
 //styles
 const styles = {
@@ -53,15 +59,19 @@ const styles = {
 };
 
 //data for historic
+
+let address = '353d2e756f5db18d0fdbc34c4736a514';
+let amount = 123334;
+
 const tableData = [
     {
         inOut: <VerticAlalignTop/>,
-        amountAddress: '1234567876543 asdfgh4j234h234234jh2',
+        amountAddress: amount+' '+address,
     },
 
     {
         inOut: <VerticAlalignBottom/>,
-        amountAddress: '1234567876543 asdfgh4j234h234234jh2',
+        amountAddress: amount+' '+address,
 
     },
 
@@ -73,13 +83,34 @@ export default class MainToolbar extends React.PureComponent {
 
     constructor(props) {
         super(props);
-        this.state = {value: 3, };
+        this.state = {
+            value: 3,
+            sendOrReceive: 0,
+        };
         this.handleChange = this.handleChange.bind(this);
+        this.handleTouchTap = this.handleTouchTap.bind(this);
+        this.handleRequestClose= this.handleRequestClose.bind(this);
     };
 
     //Change handlers
     handleChange (event, index, value) { this.setState({value});};
 
+    handleTouchTap() {
+        this.setState({
+            open: true,
+        });
+    };
+
+    handleRequestClose(){
+        this.setState({
+            open: false,
+        });
+    };
+
+    handleClick(sendOrReceive){
+      this.setState({sendOrReceive})
+
+    };
 
     //renders
     renderToolbar() {
@@ -87,15 +118,18 @@ export default class MainToolbar extends React.PureComponent {
             <Toolbar>
                 <ToolbarGroup firstChild={true}>
                     <ToolbarTitle text="Soar-Coin"/>
+                    <IconButton iconStyle={styles.mediumIcon} style={styles.medium}>
+                        <Home onClick={() => this.handleClick(0)}/>
+                    </IconButton>
                 </ToolbarGroup>
 
                 <ToolbarGroup>
-                    <IconButton iconStyle={styles.mediumIcon} style={styles.medium}>
-                        <VerticAlalignBottom />
+                    <IconButton  iconStyle={styles.mediumIcon} style={styles.medium}>
+                        <VerticAlalignBottom onClick={() => this.handleClick(1)}/>
                     </IconButton>
 
-                    <IconButton iconStyle={styles.mediumIcon} style={styles.medium}>
-                        <VerticAlalignTop />
+                    <IconButton  iconStyle={styles.mediumIcon} style={styles.medium}>
+                        <VerticAlalignTop onClick={() =>this.handleClick(2)}/>
                     </IconButton>
                 </ToolbarGroup>
 
@@ -108,8 +142,8 @@ export default class MainToolbar extends React.PureComponent {
                             </IconButton>
                         }
                     >
-                        <MenuItem primaryText="Copy address"/>
-                        <MenuItem primaryText="Copy Mnemonic"/>
+                        <MenuItem onClick={this.handleTouchTap} primaryText="Copy address"/>
+                        <MenuItem onClick={this.handleTouchTap} primaryText="Copy Mnemonic"/>
                     </IconMenu>
                 </ToolbarGroup>
             </Toolbar>
@@ -143,29 +177,139 @@ export default class MainToolbar extends React.PureComponent {
     };
 
     renderCard(){
-        return(
-            <Card>
-                <Table  selectable={false}>
-                    <TableBody displayRowCheckbox={false}>
-                        <TableRow>
-                            <TableRowColumn style={styles.center}>
-                                <QRCode value="http://facebook.github.io/react/"/>
-                            </TableRowColumn>
-                            <TableRowColumn>
-                                 <CardText style={styles.left}>
-                                        Name surname
-                                    1000 SOAR = 100 CHF
+        let sendOrReceive= this.state.sendOrReceive;
 
-                                </CardText>
-                            </TableRowColumn>
-                        </TableRow>
-                </TableBody>
-                </Table>
-            </Card>
-        );
+        switch(sendOrReceive) {
+            case 1:
+                //send
+                return(
+                    <Card>
+                        <Table  style={{ tableLayout: 'auto' }} fixedHeader={false} selectable={false}>
+                            <TableBody displayRowCheckbox={false}>
+                                <TableRow>
+                                    <TableRowColumn visible={false} style={styles.center}>
+                                        <QRCode size="48" value="http://facebook.github.io/react/"/>
+                                    </TableRowColumn>
+                                    <TableRowColumn>
+                                        <CardText style={styles.center}>
+                                            Name surname <br/>
+                                            1000 SOAR = 100 CHF
+
+                                        </CardText>
+                                    </TableRowColumn>
+                                </TableRow>
+
+                                <TableRow>
+                                    <TableRowColumn>
+                                        <IconButton iconStyle={styles.mediumIcon} style={styles.medium}>
+                                            <QRCode size="48" value="http://facebook.github.io/react/" />
+                                        </IconButton>
+                                    </TableRowColumn>
+
+                                    <TableRowColumn>
+                                        <CardText style={styles.left}>
+                                            Amount to transfer
+                                            <br />
+                                            <TextField
+                                                hintText="1'000"
+                                            /><br />
+
+                                        </CardText>
+                                    </TableRowColumn>
+                                </TableRow>
+                            </TableBody>
+                        </Table>
+                    </Card>
+                );
+                break;
+            case 2:
+                //receive
+                return(
+                    <Card>
+                        <Table  style={{ tableLayout: 'auto' }} fixedHeader={false} selectable={false}>
+                            <TableBody displayRowCheckbox={false}>
+                                <TableRow>
+                                    <TableRowColumn style={styles.center}>
+                                        <QRCode  size="48" value="http://facebook.github.io/react/"/>
+                                    </TableRowColumn>
+                                    <TableRowColumn>
+                                        <CardText style={styles.center}>
+                                            Name surname <br/>
+                                            1000 SOAR = 100 CHF
+
+                                        </CardText>
+                                    </TableRowColumn>
+                                </TableRow>
+
+                                <TableRow>
+                                    <TableRowColumn>
+                                        <IconButton iconStyle={styles.mediumIcon} style={styles.medium}>
+                                            <Camera />
+                                        </IconButton>
+                                    </TableRowColumn>
+
+                                    <TableRowColumn>
+                                        <CardText style={styles.left}>
+                                            Amount to transfer
+                                            <br />
+                                            <TextField
+                                                hintText="1'000"
+                                            /><br />
+
+                                        </CardText>
+                                    </TableRowColumn>
+                                </TableRow>
+
+
+                            </TableBody>
+                        </Table>
+                    </Card>
+                );
+                break;
+            case 0:
+                //home screen
+                return(
+                    <Card>
+                        <Table  style={{ tableLayout: 'auto' }} fixedHeader={false} selectable={false}>
+                            <TableBody displayRowCheckbox={false}>
+                                <TableRow>
+                                    <TableRowColumn style={styles.center}>
+                                        <QRCode size="48" value="http://facebook.github.io/react/"/>
+                                    </TableRowColumn>
+                                    <TableRowColumn>
+                                        <CardText style={styles.left}>
+                                            Name Surname <br/>
+                                            1000 SOAR = 100 CHF
+
+                                        </CardText>
+                                    </TableRowColumn>
+                                </TableRow>
+                            </TableBody>
+                        </Table>
+                    </Card>
+                );
+        }
+
 
     };
 
+
+    renderSnackbar() {
+        return (
+            <div>
+                <RaisedButton
+                    onTouchTap={this.handleTouchTap}
+                    label="Add to my calendar"
+                />
+                <Snackbar
+                    open={this.state.open}
+                    message="Event added to your calendar"
+                    autoHideDuration={4000}
+                    onRequestClose={this.handleRequestClose}
+                />
+            </div>
+        );
+    }
 
     render() {
         return(
