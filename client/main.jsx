@@ -5,7 +5,7 @@ import AppBar from 'material-ui/AppBar';
 import ReactDOM from 'react-dom';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import injectTapEventPlugin from 'react-tap-event-plugin';
-import MainWindow from "../imports/ui/mainWindow";
+import MainWindow from "../imports/ui/MainWindow";
 
 const App = () => (
     <MuiThemeProvider>
